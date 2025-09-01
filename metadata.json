@@ -1,0 +1,5 @@
+{
+  "name": " Mini RAG AI Explorer",
+  "description": "An AI-powered application that allows users to upload or paste text, and then ask questions about it. The app uses a Retrieval-Augmented Generation (RAG) approach, leveraging the Gemini API to provide grounded answers with inline citations from the source text.",
+  "requestFramePermissions": []
+}
