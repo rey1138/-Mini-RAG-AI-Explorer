@@ -1,14 +1,6 @@
-
 # Mini RAG AI Explorer
 
 **Mini RAG AI Explorer** is a simple yet powerful web application demonstrating the concept of Retrieval-Augmented Generation (RAG). It allows users to provide a text document, ask questions about it, and receive answers that are grounded in the document's content, complete with inline citations. This project is built with React, TypeScript, and Tailwind CSS, and it uses the Google Gemini API for its advanced retrieval, reranking, and generation capabilities.
-
----
-
-## 🔗 Project Links
-
--   **Live URL**: `[Insert Live URL Here]`
--   **Public GitHub Repo**: `[Insert GitHub Repo URL Here]`
 
 ---
 
@@ -67,12 +59,14 @@ Follow these instructions to set up and run the project locally.
 -   A modern web browser (like Chrome, Firefox, or Safari).
 -   A Google Gemini API Key. You can get one from [Google AI Studio](https://aistudio.google.com/app/apikey).
 
-### Running the Application
+### Running Locally
 
 This project is a pure client-side application and can be run without any complex setup.
 
 1.  **Download the project files.**
-2.  **Open `index.html`:** Simply open the `index.html` file in your web browser. Alternatively, you can serve the project directory using any static file server.
+2.  **Open `index.html`:** Simply open the `index.html` file in your web browser.
+3.  **Use a local server (optional but recommended):** For the best experience, serve the project directory using a simple local server. If you have Node.js installed, you can use `npx serve .` from the project's root directory.
+
 
 ### Setting Up Your API Key
 
@@ -84,6 +78,8 @@ The application requires a Google Gemini API key to function.
 -   You can change the key at any time by clicking the settings icon in the header.
 
 ---
+
+
 
 ## 📝 Remarks
 
