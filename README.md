@@ -15,6 +15,7 @@
 ## ✨ Features
 
 -   **Provide Your Own Context**: Paste text directly or upload a `.txt` file to serve as the knowledge base.
+-   **Secure API Key Handling**: Prompts for your Gemini API key and stores it safely in your browser's session storage.
 -   **AI-Powered RAG Pipeline**: Implements a multi-step process of semantic retrieval, reranking, and generation.
 -   **Grounded Answers**: The AI's responses are based *only* on the information present in the document.
 -   **Inline Citations**: Each part of the answer is linked back to the specific source chunk it came from, ensuring verifiability.
@@ -63,47 +64,24 @@ Follow these instructions to set up and run the project locally.
 
 ### Prerequisites
 
--   [Node.js](https://nodejs.org/) (v18 or later recommended)
--   A package manager like `npm` or `yarn`
+-   A modern web browser (like Chrome, Firefox, or Safari).
 -   A Google Gemini API Key. You can get one from [Google AI Studio](https://aistudio.google.com/app/apikey).
-
-### Installation & Setup
-
-1.  **Clone the repository:**
-    ```bash
-    git clone <repository-url>
-    cd mini-rag-ai-explorer
-    ```
-
-2.  **Install dependencies:**
-    This project uses an `importmap` in `index.html` to load dependencies from a CDN, so a traditional `npm install` for packages like React is not strictly necessary for the code as-is. However, you will need a local development server to handle the TypeScript compilation and environment variables. [Vite](https://vitejs.dev/) is recommended.
-
-    You can set up a Vite project and move the existing source files into it.
-
-3.  **Set up your Environment Variables:**
-    The application needs your Gemini API key to function.
-
-    -   Create a new file named `.env.local` in the root of your project directory.
-    -   Add your API key to this file:
-
-    ```env
-    # .env.local
-    VITE_API_KEY=YOUR_GEMINI_API_KEY_HERE
-    ```
-
-    Replace `YOUR_GEMINI_API_KEY_HERE` with your actual key. Vite will automatically load this file and make the key available to the application.
 
 ### Running the Application
 
-If you are using Vite as your development server:
+This project is a pure client-side application and can be run without any complex setup.
 
-1.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
+1.  **Download the project files.**
+2.  **Open `index.html`:** Simply open the `index.html` file in your web browser. Alternatively, you can serve the project directory using any static file server.
 
-2.  **Open your browser:**
-    Navigate to the local URL provided by Vite (usually `http://localhost:5173`). You should now see the Mini RAG AI Explorer running!
+### Setting Up Your API Key
+
+The application requires a Google Gemini API key to function.
+
+-   When you first open the application, you will be prompted to enter your API key.
+-   The key is stored securely in your browser's **session storage** and is only used for the current session. It is never transmitted to any server other than Google's.
+-   You can get a free API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+-   You can change the key at any time by clicking the settings icon in the header.
 
 ---
 
@@ -111,10 +89,10 @@ If you are using Vite as your development server:
 
 ### Limitations & Trade-offs
 
--   **Client-Side Architecture**: The entire RAG pipeline runs in the browser. This is simple for a demo but is not scalable for large documents, introduces latency due to multiple sequential API calls, and exposes application logic.
+-   **Client-Side Architecture**: The entire RAG pipeline runs in the browser. This is simple for a demo but is not scalable for large documents and introduces latency due to multiple sequential API calls.
 -   **No Vector Database**: To meet the spirit of the requirements within a client-side context, this project simulates semantic retrieval and reranking using Gemini. A production system would use a dedicated, persistent vector database (like Pinecone, Weaviate, etc.) for efficient, scalable retrieval. This would involve a one-time "embedding" cost during ingestion rather than a dynamic retrieval cost on every query.
 -   **No Persistence**: The uploaded document and conversation are lost on page refresh. There is no backend or database to store state.
--   **API Key Exposure (CRITICAL)**: As a purely client-side application, the Gemini API key is bundled with the JavaScript and is **exposed to the browser**. This is a significant security risk in a public application. The standard and required solution for this is to have a backend service that proxies requests to the AI provider, keeping the API key secure on the server.
+-   **API Key Handling**: This application runs entirely in the browser. To handle the Gemini API key, it prompts the user to enter their key, which is then stored in the browser's `sessionStorage`. This means the key is only available for the duration of the browser tab session and is not hardcoded in the source code. While this is safer than exposing a hardcoded key, a production-grade application should always proxy API calls through a secure backend server to completely protect the API key.
 -   **Stateless QA**: The app does not maintain conversation history. Each query is treated as a new, independent question.
 
 ### What I'd Do Next (Future Improvements)

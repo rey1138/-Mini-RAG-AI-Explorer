@@ -11,6 +11,7 @@ interface QaPanelProps {
   aiResponse: string;
   citedChunks: Chunk[];
   isLoading: boolean;
+  isQueryDisabled: boolean;
   loadingMessage: string;
   requestDetails: RequestDetails | null;
   error: string | null;
@@ -31,7 +32,7 @@ const Citation = ({ index, onClick }: { index: number; onClick: () => void; }) =
     </a>
 );
 
-export const QaPanel: React.FC<QaPanelProps> = ({ appState, onQuerySubmit, aiResponse, citedChunks, isLoading, loadingMessage, requestDetails, error, highlightedChunkId, onHighlightChunk }) => {
+export const QaPanel: React.FC<QaPanelProps> = ({ appState, onQuerySubmit, aiResponse, citedChunks, isLoading, isQueryDisabled, loadingMessage, requestDetails, error, highlightedChunkId, onHighlightChunk }) => {
   const [query, setQuery] = useState('');
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -121,12 +122,12 @@ export const QaPanel: React.FC<QaPanelProps> = ({ appState, onQuerySubmit, aiRes
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ask a question based on the document..."
               className="w-full bg-slate-700 border border-slate-600 rounded-full py-3 pl-5 pr-14 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-              disabled={isLoading}
+              disabled={isQueryDisabled}
             />
             <button
               type="submit"
               className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-indigo-600 hover:bg-indigo-500 rounded-full text-white transition-colors disabled:bg-indigo-400 disabled:cursor-not-allowed"
-              disabled={isLoading || !query.trim()}
+              disabled={isQueryDisabled || !query.trim()}
             >
               <SendIcon />
             </button>

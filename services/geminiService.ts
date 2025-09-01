@@ -2,13 +2,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { Chunk } from '../types';
 
-const apiKey = process.env.API_KEY;
+const API_KEY_SESSION_STORAGE_KEY = 'gemini-api-key';
 
-if (!apiKey) {
-  throw new Error("API_KEY environment variable not set.");
+function getClient(): GoogleGenAI {
+  const apiKey = sessionStorage.getItem(API_KEY_SESSION_STORAGE_KEY);
+  if (!apiKey) {
+    throw new Error("Gemini API key not found. Please set it in the application settings.");
+  }
+  return new GoogleGenAI({ apiKey });
 }
-
-const ai = new GoogleGenAI({ apiKey });
 
 export async function getGroundedAnswer(query: string, contextChunks: Chunk[]): Promise<{ response: string; promptLength: number }> {
   const model = 'gemini-2.5-flash';
@@ -34,6 +36,7 @@ ${query}
 `;
 
   try {
+    const ai = getClient();
     const response = await ai.models.generateContent({
         model: model,
         contents: prompt
@@ -45,6 +48,9 @@ ${query}
     };
   } catch (error) {
     console.error("Error calling Gemini API:", error);
+    if (error instanceof Error && error.message.includes("API key not valid")) {
+        throw new Error("The provided Gemini API key is not valid. Please check it in the settings.");
+    }
     throw new Error("Failed to communicate with the AI model. Please check your API key and network connection.");
   }
 }
@@ -70,6 +76,7 @@ ${chunkContent}
 `;
   
   try {
+    const ai = getClient();
     const response = await ai.models.generateContent({
       model,
       contents: prompt,
@@ -97,6 +104,9 @@ ${chunkContent}
 
   } catch (error) {
     console.error("Error calling Gemini API for retrieval:", error);
+     if (error instanceof Error && error.message.includes("API key not valid")) {
+        throw new Error("The provided Gemini API key is not valid. Please check it in the settings.");
+    }
     // Fallback: if retrieval fails, return an empty array or the first few chunks as a last resort.
     return [];
   }
@@ -125,6 +135,7 @@ ${chunkContent}
 `;
 
   try {
+    const ai = getClient();
     const response = await ai.models.generateContent({
       model,
       contents: prompt,
@@ -163,6 +174,9 @@ ${chunkContent}
     return [...rerankedChunks, ...missingChunks];
   } catch (error) {
     console.error("Error calling Gemini API for reranking:", error);
+     if (error instanceof Error && error.message.includes("API key not valid")) {
+        throw new Error("The provided Gemini API key is not valid. Please check it in the settings.");
+    }
     // Fallback to original order if reranking fails
     return chunks;
   }

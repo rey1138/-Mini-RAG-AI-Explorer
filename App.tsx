@@ -7,6 +7,9 @@ import { chunkText } from './utils/textUtils';
 import { getGroundedAnswer, rerankChunks, retrieveChunks } from './services/geminiService';
 import type { Chunk, RequestDetails } from './types';
 import { AppState } from './types';
+import { ApiKeyModal } from './components/ApiKeyModal';
+
+const API_KEY_SESSION_STORAGE_KEY = 'gemini-api-key';
 
 const App: React.FC = () => {
   const [sourceText, setSourceText] = useState<string>('');
@@ -19,11 +22,24 @@ const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>(AppState.INITIAL);
   const [requestDetails, setRequestDetails] = useState<RequestDetails | null>(null);
   const [highlightedChunkId, setHighlightedChunkId] = useState<number | null>(null);
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [showApiKeyModal, setShowApiKeyModal] = useState<boolean>(false);
 
 
   useEffect(() => {
-    // A welcome message can be set here if needed
+    const storedKey = sessionStorage.getItem(API_KEY_SESSION_STORAGE_KEY);
+    if (storedKey) {
+      setApiKey(storedKey);
+    } else {
+      setShowApiKeyModal(true);
+    }
   }, []);
+
+  const handleSaveApiKey = (key: string) => {
+    setApiKey(key);
+    sessionStorage.setItem(API_KEY_SESSION_STORAGE_KEY, key);
+    setShowApiKeyModal(false);
+  };
 
   const handleIngest = useCallback((text: string) => {
     try {
@@ -116,12 +132,20 @@ const App: React.FC = () => {
     }, 2000); // Highlight lasts for 2 seconds
   }, []);
 
+  const isAppDisabled = isLoading || !apiKey;
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-200 font-sans flex flex-col">
-      <Header />
+      {showApiKeyModal && (
+        <ApiKeyModal 
+          onSave={handleSaveApiKey} 
+          initialApiKey={apiKey || ''} 
+        />
+      )}
+      <Header onSettingsClick={() => setShowApiKeyModal(true)} />
       <main className="flex-grow container mx-auto p-4 md:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="flex flex-col gap-6">
-          <DocumentInput onIngest={handleIngest} onReset={handleReset} isDisabled={isLoading} />
+          <DocumentInput onIngest={handleIngest} onReset={handleReset} isDisabled={isAppDisabled} />
         </div>
         <div className="flex flex-col">
           <QaPanel 
@@ -130,6 +154,7 @@ const App: React.FC = () => {
             aiResponse={aiResponse}
             citedChunks={citedChunks}
             isLoading={isLoading}
+            isQueryDisabled={isAppDisabled}
             loadingMessage={loadingMessage}
             requestDetails={requestDetails}
             error={error}
